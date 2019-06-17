@@ -56,8 +56,8 @@ static int dump_info()
 
 	
 	do{
-		ret = read(fd, &p, sizeof(person));	//읽기 실패
-		if (ret == -1){	
+		ret = read(fd, &p, sizeof(person));
+		if (ret == -1){		//읽기 실패
 			printf("read fail\n");
 			close(fd);
 			return -1;
