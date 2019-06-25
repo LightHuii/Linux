@@ -15,8 +15,8 @@ int main(int argc, char **argv)
 	int ret;		//리턴 값
 	char buf[1024];
 	struct inotify_event *event;	//inotify 객체의 이벤트 정보
-	fd_set fds;
-	struct timeval timeout;
+	fd_set fds;		//fd set
+	struct timeval timeout;	//timeout 구조체
 
 
 	fd = inotify_init();	//inotify 객체 리턴
@@ -38,11 +38,11 @@ int main(int argc, char **argv)
 	
 	while(1){
 		//select를 호출하기 전에 fds를 설정해 주어야 한다.
-		FD_ZERO(&fds);
-		FD_SET(fd, &fds);
-		FD_SET(STDIN_FILENO, &fds);
+		FD_ZERO(&fds);		//fd set 초기화
+		FD_SET(fd, &fds);	//inotify fd를 fds에 등록
+		FD_SET(STDIN_FILENO, &fds);	//stdin fd를 fds에 등록	
 		timeout.tv_sec = 5;
-		timeout.tv_usec = 0;
+		timeout.tv_usec = 0;	//5초로 설정
 
 		ret = select(fd > STDIN_FILENO ? fd + 1 : STDIN_FILENO + 1,
 					 &fds, NULL, NULL, &timeout);
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 					printf("read() fail\n");
 					break;
 				}
-				printf("user input [%s]\n", buf);
+				printf("user input [%s]\n", buf);	//stdin 입력 문자열 출력
 			}
 		}
 	}

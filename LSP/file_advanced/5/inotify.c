@@ -22,8 +22,8 @@ int main(int argc, char **argv)
 	int wd1 = -1;	//watch1 디스크립터
 	int wd2 = -1;	//watch2 디스크립터
 	int ret;		//리턴 값
-	char buf[1024];
-	struct inotify_event *event;	//inotify 객체의 이벤트 정보
+	char buf[1024];	//inotify event 정보가 담길 임시 버퍼
+	struct inotify_event *event;	//inotify 객체의 이벤트 정보의 포인터
 
 	fd = inotify_init();	//inotify 객체 리턴
 	if(fd == -1){
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 		}
 	
 		//이벤트 발생
-		event = (struct inotify_event *)&buf[0];	//event 정보 입력. event가 포인터이므로 포인터로 받는다.
+		event = (struct inotify_event *)buf;	//event 정보 입력. event가 포인터이므로 포인터로 받는다.
 		while (ret > 0){	//현재 읽어온 event 정보가 끝날 때까지
 		  	if(event->mask & IN_CREATE){		//파일이 생성될 때
 		   		printf("file %s created\n", event->name);
@@ -60,6 +60,7 @@ int main(int argc, char **argv)
 		   	if(event->mask & IN_DELETE){		//파일이 삭제될 때
 		   		printf("file %s deleted\n", event->name);
 		   	}
+
 			event = (struct inotify_event*)((char *)event + sizeof(struct inotify_event) + event->len);
 			//다음 inotify_event 정보 포인터
 			ret -= sizeof(struct inotify_event) + event->len;
